@@ -28,11 +28,12 @@ export const STATE = {
   camera: {targetFPS: 60, sizeOption: '640 X 480'},
   backend: '',
   flags: {},
-  modelConfig: {}
+  modelConfig: {},
 };
 export const MEDIAPIPE_HANDS_CONFIG = {
   type: 'full',
-  render3D: true
+  render3D: false,
+  render2D: false,
 };
 /**
  * This map descripes tunable flags and theior corresponding types.

@@ -32,11 +32,11 @@ const fingerLookupIndices = {
 }; // for rendering each finger as a polyline
 
 const connections = [
-  [0, 1], [1, 2], [2, 3], [3,4],
+  [0, 1], [1, 2], [2, 3], [3, 4],
   [0, 5], [5, 6], [6, 7], [7, 8],
   [0, 9], [9, 10], [10, 11], [11, 12],
-  [0, 13], [13,14], [14, 15], [15, 16],
-  [0, 17], [17, 18],[18, 19], [19,20]
+  [0, 13], [13, 14], [14, 15], [15, 16],
+  [0, 17], [17, 18], [18, 19], [19, 20],
 ];
 
 function createScatterGLContext(selectors) {
@@ -46,7 +46,7 @@ function createScatterGLContext(selectors) {
     scatterGL: new scatter.ScatterGL(scatterGLEl, {
       'rotateOnStart': true,
       'selectEnabled': false,
-      'styles': {polyline: {defaultOpacity: 1, deselectedOpacity: 1}}
+      'styles': {polyline: {defaultOpacity: 1, deselectedOpacity: 1}},
     }),
     scatterGLHasInitialized: false,
   };
@@ -60,6 +60,10 @@ export class Camera {
     this.video = document.getElementById('video');
     this.canvas = document.getElementById('output');
     this.ctx = this.canvas.getContext('2d');
+    this.rightPinched = false;
+    this.leftPinched = false;
+    Object.defineProperty(this, 'THUMB_TIP', {value: 4});
+    Object.defineProperty(this, 'INDEX_TIP', {value: 8});
   }
 
   /**
@@ -85,8 +89,8 @@ export class Camera {
                              $size.height,
         frameRate: {
           ideal: targetFPS,
-        }
-      }
+        },
+      },
     };
 
     const stream = await navigator.mediaDevices.getUserMedia(videoConfig);
@@ -168,7 +172,10 @@ export class Camera {
    */
   drawResult(hand, ctxt) {
     if (hand.keypoints != null) {
-      this.drawKeypoints(hand.keypoints, hand.handedness);
+      this.drawSmoke(hand.keypoints, hand.handedness);
+      if (params.STATE.modelConfig.render2D) {
+        this.drawKeypoints(hand.keypoints, hand.handedness);
+      }
     }
     // Don't render 3D hands after first two.
     if (ctxt == null) {
@@ -202,7 +209,7 @@ export class Camera {
     const fingers = Object.keys(fingerLookupIndices);
     for (let i = 0; i < fingers.length; i++) {
       const finger = fingers[i];
-      const points = fingerLookupIndices[finger].map(idx => keypoints[idx]);
+      const points = fingerLookupIndices[finger].map((idx) => keypoints[idx]);
       this.drawPath(points, false);
     }
   }
@@ -230,7 +237,7 @@ export class Camera {
   drawKeypoints3D(keypoints, handedness, ctxt) {
     const scoreThreshold = params.STATE.modelConfig.scoreThreshold || 0;
     const pointsData =
-        keypoints.map(keypoint => ([-keypoint.x, -keypoint.y, -keypoint.z]));
+        keypoints.map((keypoint) => ([-keypoint.x, -keypoint.y, -keypoint.z]));
 
     const dataset =
         new scatter.ScatterGL.Dataset([...pointsData, ...ANCHOR_POINTS]);
@@ -248,8 +255,43 @@ export class Camera {
     } else {
       ctxt.scatterGL.updateDataset(dataset);
     }
-    const sequences = connections.map(pair => ({indices: pair}));
+    const sequences = connections.map((pair) => ({indices: pair}));
     ctxt.scatterGL.setSequences(sequences);
     ctxt.scatterGLHasInitialized = true;
   }
+
+  drawSmoke(keyPoints, handedness) {
+    const s = this.getPointStatus(keyPoints);
+
+    if (handedness === 'Right') {
+      if (this.rightPinched && !s.pinched) {
+        this.drawPoint(s.midwayPoint.y - 2, s.midwayPoint.x - 2, 5);
+      }
+      this.rightPinched = s.pinched;
+    } else if (handedness === 'Left') {
+      if (this.leftPinched && !s.pinched) {
+        this.drawPoint(s.midwayPoint.y - 2, s.midwayPoint.x - 2, 5);
+      }
+      this.leftPinched = s.pinched;
+    }
+  };
+
+  // 2点間の距離、中間点などを取得
+  getPointStatus(keyPoints) {
+    const thumbTip = keyPoints[this.THUMB_TIP];
+    const indexTip = keyPoints[this.INDEX_TIP];
+
+    if (!thumbTip || !indexTip) return {};
+
+    const distance = Math.sqrt(Math.pow(thumbTip.x - indexTip.x, 2) +
+                               Math.pow(thumbTip.y - indexTip.y, 2));
+    return {
+      distance: distance,
+      midwayPoint: {
+        x: (thumbTip.x + indexTip.x) / 2,
+        y: (thumbTip.y + indexTip.y) / 2,
+      },
+      pinched: distance <= 10,
+    };
+  };
 }

@@ -162,6 +162,12 @@ function addMediaPipeHandsControllers(modelConfigFolder, type, maxNumHands) {
     document.querySelector('#scatter-gl-container-right').style.display =
         render3D ? 'inline-block' : 'none';
   });
+debugger;
+  const render2DController =
+    modelConfigFolder.add(params.STATE.modelConfig, 'render2D');
+  render2DController.onChange(render2D => {
+
+  });
 }
 
 /**
