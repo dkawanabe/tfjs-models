@@ -15,6 +15,7 @@
  * =============================================================================
  */
 import * as scatter from 'scatter-gl';
+import SmokeMachine from '@bijection/smoke';
 
 import * as params from './shared/params';
 import {isMobile} from './shared/util';
@@ -60,6 +61,11 @@ export class Camera {
     this.video = document.getElementById('video');
     this.canvas = document.getElementById('output');
     this.ctx = this.canvas.getContext('2d');
+
+    // eslint-disable-next-line new-cap
+    this.party = SmokeMachine(this.ctx, [200, 200, 200]);
+    this.party.start();
+
     this.rightPinched = false;
     this.leftPinched = false;
     Object.defineProperty(this, 'THUMB_TIP', {value: 4});
@@ -265,12 +271,14 @@ export class Camera {
 
     if (handedness === 'Right') {
       if (this.rightPinched && !s.pinched) {
-        this.drawPoint(s.midwayPoint.y - 2, s.midwayPoint.x - 2, 5);
+        // this.drawPoint(s.midwayPoint.y - 2, s.midwayPoint.x - 2, 5);
+        this.party.addSmoke(s.midwayPoint.x, s.midwayPoint.y, 200);
       }
       this.rightPinched = s.pinched;
     } else if (handedness === 'Left') {
       if (this.leftPinched && !s.pinched) {
-        this.drawPoint(s.midwayPoint.y - 2, s.midwayPoint.x - 2, 5);
+        // this.drawPoint(s.midwayPoint.y - 2, s.midwayPoint.x - 2, 5);
+        this.party.addSmoke(s.midwayPoint.x, s.midwayPoint.y, 200);
       }
       this.leftPinched = s.pinched;
     }

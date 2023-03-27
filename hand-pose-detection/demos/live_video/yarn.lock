@@ -913,6 +913,11 @@
     "@babel/helper-validator-identifier" "^7.14.9"
     to-fast-properties "^2.0.0"
 
+"@bijection/smoke@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@bijection/smoke/-/smoke-1.0.2.tgz#558b39c603ae1ee89d95838442983782d4fd7bc0"
+  integrity sha512-K4L+2hqsKsLRabu7J2pD9mlIUopb+W07r0e6gohKdDfsc7immhhhYRGaX1+hF19W2eXnFmdUROqXLvsZBysyfw==
+
 "@iarna/toml@^2.2.0":
   version "2.2.5"
   resolved "https://registry.yarnpkg.com/@iarna/toml/-/toml-2.2.5.tgz#b32366c89b43c6f8cefbdefac778b9c828e3ba8c"
