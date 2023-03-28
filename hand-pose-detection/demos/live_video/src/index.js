@@ -59,10 +59,12 @@ async function createDetector() {
 }
 
 async function checkGuiUpdate() {
-  if (STATE.isTargetFPSChanged || STATE.isSizeOptionChanged) {
+  if (STATE.isTargetFPSChanged ||
+      STATE.isSizeOptionChanged || STATE.isSmokeJsChanged) {
     camera = await Camera.setupCamera(STATE.camera);
     STATE.isTargetFPSChanged = false;
     STATE.isSizeOptionChanged = false;
+    STATE.isSmokeJsChanged = false;
   }
 
   if (STATE.isModelChanged || STATE.isFlagChanged || STATE.isBackendChanged) {

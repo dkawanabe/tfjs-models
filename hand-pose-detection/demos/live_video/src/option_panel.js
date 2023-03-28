@@ -81,6 +81,11 @@ export async function setupDatGui(urlParams) {
 
   modelFolder.open();
 
+  // Smoke.js
+  const smokeFolder = gui.addFolder('Smoke.js');
+  showSmokeJsConfig(smokeFolder);
+  smokeFolder.open();
+
   const backendFolder = gui.addFolder('Backend');
 
   showBackendConfigs(backendFolder);
@@ -131,6 +136,17 @@ function showModelConfigs(folderController, type, maxNumHands) {
   }
 }
 
+function showSmokeJsConfig(folderController) {
+  folderController.add(
+    params.STATE.smokeJsConfig, 'particles', 1, 50).step(1);
+  folderController.add(
+    params.STATE.smokeJsConfig, 'maxScale', 0.1, 0.5).step(0.1);
+  const colorController = folderController.addColor(params.STATE.smokeJsConfig, 'smokeColor');
+  colorController.onChange(_ => {
+    params.STATE.isSmokeJsChanged = true;
+  });
+}
+
 // The MediaPipeHands model config folder contains options for MediaPipeHands config
 // settings.
 function addMediaPipeHandsControllers(modelConfigFolder, type, maxNumHands) {
@@ -148,7 +164,7 @@ function addMediaPipeHandsControllers(modelConfigFolder, type, maxNumHands) {
 
   const maxNumHandsController = modelConfigFolder.add(
     params.STATE.modelConfig, 'maxNumHands', 1, 2).step(1);
-    maxNumHandsController.onChange(_ => {
+  maxNumHandsController.onChange(_ => {
     // Set isModelChanged to true, so that we don't render any result during
     // changing models.
     params.STATE.isModelChanged = true;
@@ -163,11 +179,7 @@ function addMediaPipeHandsControllers(modelConfigFolder, type, maxNumHands) {
         render3D ? 'inline-block' : 'none';
   });
 
-  const render2DController =
-    modelConfigFolder.add(params.STATE.modelConfig, 'render2D');
-  render2DController.onChange(render2D => {
-
-  });
+  modelConfigFolder.add(params.STATE.modelConfig, 'render2D');
 }
 
 /**

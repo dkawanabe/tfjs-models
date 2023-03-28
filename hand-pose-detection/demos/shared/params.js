@@ -29,6 +29,7 @@ export const STATE = {
   backend: '',
   flags: {},
   modelConfig: {},
+  smokeJsConfig: {particles: 10, maxScale: 0.2, smokeColor: [200, 200, 200]},
 };
 export const MEDIAPIPE_HANDS_CONFIG = {
   type: 'full',

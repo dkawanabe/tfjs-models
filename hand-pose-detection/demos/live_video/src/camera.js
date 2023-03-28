@@ -63,10 +63,7 @@ export class Camera {
     this.ctx = this.canvas.getContext('2d');
     this.overlayCanvas = document.getElementById('overlay');
     this.overlayCtx = this.overlayCanvas.getContext('2d');
-
-    // eslint-disable-next-line new-cap
-    this.party = SmokeMachine(this.overlayCtx, [200, 200, 200]);
-    this.party.start();
+    this.party = null;
 
     this.rightPinched = false;
     this.leftPinched = false;
@@ -145,6 +142,11 @@ export class Camera {
       ctxt.scatterGLEl.style.display =
           params.STATE.modelConfig.render3D ? 'inline-block' : 'none';
     }
+
+    // eslint-disable-next-line new-cap
+    camera.party = SmokeMachine(camera.overlayCtx,
+      params.STATE.smokeJsConfig.smokeColor);
+    camera.party.start();
 
     return camera;
   }
@@ -281,12 +283,12 @@ export class Camera {
 
     if (handedness === 'Right') {
       if (this.rightPinched && !s.pinched) {
-        this.party.addSmoke(s.midwayPoint.x, s.midwayPoint.y, 10);
+        this.addSmoke(s.midwayPoint.x, s.midwayPoint.y);
       }
       this.rightPinched = s.pinched;
     } else if (handedness === 'Left') {
       if (this.leftPinched && !s.pinched) {
-        this.party.addSmoke(s.midwayPoint.x, s.midwayPoint.y, 10);
+        this.addSmoke(s.midwayPoint.x, s.midwayPoint.y);
       }
       this.leftPinched = s.pinched;
     }
@@ -310,4 +312,10 @@ export class Camera {
       pinched: distance <= this.PINCHED_DISTANCE,
     };
   };
+
+  addSmoke(x, y) {
+    this.party.addSmoke(x, y, params.STATE.smokeJsConfig.particles,
+      {minScale: 0, maxScale: params.STATE.smokeJsConfig.maxScale}
+    );
+  }
 }
