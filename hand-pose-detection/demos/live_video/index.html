@@ -27,12 +27,18 @@ limitations under the License.
       position: relative;
       margin: 0;
     }
-    #canvas-wrapper {
+    .canvas-wrapper {
       position: relative;
     }
     #scatter-gl-container-left, #scatter-gl-container-right {
       position: relative;
       float: left;
+    }
+    .overlay-canvas {
+      background: transparent;
+      position: absolute;
+      top: 0;
+      left: 0;
     }
   </style>
 </head>
@@ -42,6 +48,7 @@ limitations under the License.
     <div class="container">
       <div class="canvas-wrapper">
         <canvas id="output"></canvas>
+        <canvas id="overlay" class="overlay-canvas"></canvas>
         <video id="video" playsinline style="
           -webkit-transform: scaleX(-1);
           transform: scaleX(-1);

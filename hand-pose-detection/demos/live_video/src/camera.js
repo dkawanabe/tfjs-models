@@ -61,9 +61,11 @@ export class Camera {
     this.video = document.getElementById('video');
     this.canvas = document.getElementById('output');
     this.ctx = this.canvas.getContext('2d');
+    this.overlayCanvas = document.getElementById('overlay');
+    this.overlayCtx = this.overlayCanvas.getContext('2d');
 
     // eslint-disable-next-line new-cap
-    this.party = SmokeMachine(this.ctx, [200, 200, 200]);
+    this.party = SmokeMachine(this.overlayCtx, [200, 200, 200]);
     this.party.start();
 
     this.rightPinched = false;
@@ -120,12 +122,19 @@ export class Camera {
 
     camera.canvas.width = videoWidth;
     camera.canvas.height = videoHeight;
+
+    camera.overlayCanvas.width = videoWidth;
+    camera.overlayCanvas.height = videoHeight;
+
     const canvasContainer = document.querySelector('.canvas-wrapper');
     canvasContainer.style = `width: ${videoWidth}px; height: ${videoHeight}px`;
 
     // Because the image from camera is mirrored, need to flip horizontally.
     camera.ctx.translate(camera.video.videoWidth, 0);
     camera.ctx.scale(-1, 1);
+
+    camera.overlayCtx.translate(camera.video.videoWidth, 0);
+    camera.overlayCtx.scale(-1, 1);
 
     for (const ctxt of [scatterGLCtxtLeftHand, scatterGLCtxtRightHand]) {
       ctxt.scatterGLEl.style =
@@ -272,13 +281,13 @@ export class Camera {
     if (handedness === 'Right') {
       if (this.rightPinched && !s.pinched) {
         // this.drawPoint(s.midwayPoint.y - 2, s.midwayPoint.x - 2, 5);
-        this.party.addSmoke(s.midwayPoint.x, s.midwayPoint.y, 200);
+        this.party.addSmoke(s.midwayPoint.x, s.midwayPoint.y, 10);
       }
       this.rightPinched = s.pinched;
     } else if (handedness === 'Left') {
       if (this.leftPinched && !s.pinched) {
         // this.drawPoint(s.midwayPoint.y - 2, s.midwayPoint.x - 2, 5);
-        this.party.addSmoke(s.midwayPoint.x, s.midwayPoint.y, 200);
+        this.party.addSmoke(s.midwayPoint.x, s.midwayPoint.y, 10);
       }
       this.leftPinched = s.pinched;
     }
