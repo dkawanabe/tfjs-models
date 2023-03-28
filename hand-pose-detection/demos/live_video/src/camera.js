@@ -72,6 +72,7 @@ export class Camera {
     this.leftPinched = false;
     Object.defineProperty(this, 'THUMB_TIP', {value: 4});
     Object.defineProperty(this, 'INDEX_TIP', {value: 8});
+    Object.defineProperty(this, 'PINCHED_DISTANCE', {value: 15});
   }
 
   /**
@@ -280,13 +281,11 @@ export class Camera {
 
     if (handedness === 'Right') {
       if (this.rightPinched && !s.pinched) {
-        // this.drawPoint(s.midwayPoint.y - 2, s.midwayPoint.x - 2, 5);
         this.party.addSmoke(s.midwayPoint.x, s.midwayPoint.y, 10);
       }
       this.rightPinched = s.pinched;
     } else if (handedness === 'Left') {
       if (this.leftPinched && !s.pinched) {
-        // this.drawPoint(s.midwayPoint.y - 2, s.midwayPoint.x - 2, 5);
         this.party.addSmoke(s.midwayPoint.x, s.midwayPoint.y, 10);
       }
       this.leftPinched = s.pinched;
@@ -308,7 +307,7 @@ export class Camera {
         x: (thumbTip.x + indexTip.x) / 2,
         y: (thumbTip.y + indexTip.y) / 2,
       },
-      pinched: distance <= 10,
+      pinched: distance <= this.PINCHED_DISTANCE,
     };
   };
 }
