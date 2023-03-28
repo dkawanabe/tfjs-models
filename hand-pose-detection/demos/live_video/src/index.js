@@ -167,8 +167,9 @@ async function app() {
   // Gui content will change depending on which model is in the query string.
   const urlParams = new URLSearchParams(window.location.search);
   if (!urlParams.has('model')) {
-    alert('Cannot find model in the query string.');
-    return;
+    urlParams.append('model', 'mediapipe_hands');
+  } else if (urlParams.get('model') !== 'mediapipe_hands') {
+    urlParams.set('model', 'mediapipe_hands');
   }
 
   await setupDatGui(urlParams);
