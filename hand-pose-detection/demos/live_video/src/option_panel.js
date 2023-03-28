@@ -147,7 +147,7 @@ function addMediaPipeHandsControllers(modelConfigFolder, type, maxNumHands) {
   });
 
   const maxNumHandsController = modelConfigFolder.add(
-    params.STATE.modelConfig, 'maxNumHands', 1, 10).step(1);
+    params.STATE.modelConfig, 'maxNumHands', 1, 2).step(1);
     maxNumHandsController.onChange(_ => {
     // Set isModelChanged to true, so that we don't render any result during
     // changing models.
