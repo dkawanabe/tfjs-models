@@ -70,6 +70,7 @@ export class Camera {
     Object.defineProperty(this, 'THUMB_TIP', {value: 4});
     Object.defineProperty(this, 'INDEX_TIP', {value: 8});
     Object.defineProperty(this, 'PINCHED_DISTANCE', {value: 15});
+    Object.defineProperty(this, 'RELEASED_DISTANCE', {value: 80});
   }
 
   /**
@@ -279,7 +280,7 @@ export class Camera {
   }
 
   drawSmoke(keyPoints, handedness) {
-    const s = this.getPointStatus(keyPoints);
+    const s = this.getPointStatus(keyPoints, handedness);
 
     if (handedness === 'Right') {
       if (this.rightPinched && !s.pinched) {
@@ -295,21 +296,27 @@ export class Camera {
   };
 
   // 2点間の距離、中間点などを取得
-  getPointStatus(keyPoints) {
+  getPointStatus(keyPoints, handedness) {
     const thumbTip = keyPoints[this.THUMB_TIP];
     const indexTip = keyPoints[this.INDEX_TIP];
 
     if (!thumbTip || !indexTip) return {};
 
+    let stillPinched = handedness === 'Right' ? this.rightPinched
+                                              : this.leftPinched;
+
     const distance = Math.sqrt(Math.pow(thumbTip.x - indexTip.x, 2) +
                                Math.pow(thumbTip.y - indexTip.y, 2));
+
     return {
       distance: distance,
       midwayPoint: {
         x: (thumbTip.x + indexTip.x) / 2,
         y: (thumbTip.y + indexTip.y) / 2,
       },
-      pinched: distance <= this.PINCHED_DISTANCE,
+      pinched: stillPinched
+        ? distance < this.RELEASED_DISTANCE
+        : distance <= this.PINCHED_DISTANCE,
     };
   };
 
