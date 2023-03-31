@@ -281,6 +281,7 @@ export class Camera {
 
   drawSmoke(keyPoints, handedness) {
     const s = this.getPointStatus(keyPoints, handedness);
+    if (!s) return;
 
     if (handedness === 'Right') {
       if (this.rightPinched && !s.pinched) {
@@ -300,7 +301,7 @@ export class Camera {
     const thumbTip = keyPoints[this.THUMB_TIP];
     const indexTip = keyPoints[this.INDEX_TIP];
 
-    if (!thumbTip || !indexTip) return {};
+    if (!thumbTip || !indexTip) return null;
 
     let stillPinched = handedness === 'Right' ? this.rightPinched
                                               : this.leftPinched;
